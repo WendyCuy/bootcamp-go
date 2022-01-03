@@ -1,0 +1,11 @@
+{
+  
+    "id": "001",
+    "nombre": "Televisor",
+    "color": "gris",
+    "precio": 100,
+    "stock": 200,
+    "codigo": "abc123",
+    "publicado": true,
+    "fecha": "2021-12-22"
+  }
