@@ -12,7 +12,7 @@ func TestDivision(t *testing.T) {
 	num2 := 1
 
 	// Se ejecuta el test
-	resultado := Division(num1, num2)
+	resultado := Division(num1, num2)(error)
 
 	// Se validan los resultados aprovechando testify
 	assert.NotNil(t, resultado)
