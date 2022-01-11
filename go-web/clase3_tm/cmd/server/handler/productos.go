@@ -81,6 +81,9 @@ func (c *Product) Store() gin.HandlerFunc {
 		ctx.JSON(200, p)
 	}
 }
+
+/* Se agrega el controlador Update en el handler de productos */
+
 func (c *Product) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 

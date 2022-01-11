@@ -45,6 +45,9 @@ func (r *repository) Store(id int, nombre, tipo string, cantidad int, precio flo
 	return p, nil
 }
 
+/* Se implementa la funcionalidad para actualizar el producto en memoria,
+en caso que coincida con ID enviado, caso contrario retorna un error */
+
 func (r *repository) Update(id int, name, productType string, count int, price float64) (Product, error) {
 	p := Product{Name: name, Type: productType, Count: count, Price: price}
 	updated := false

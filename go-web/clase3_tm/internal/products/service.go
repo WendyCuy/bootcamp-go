@@ -47,6 +47,9 @@ func (s *service) Store(nombre, tipo string, cantidad int, precio float64) (Prod
 	return producto, nil
 }
 
+/* Dentro del servicio se llama al repositorio para que proceda a
+actualizar el producto. */
+
 func (s *service) Update(id int, name, productType string, count int, price float64) (Product, error) {
 	return s.repository.Update(id, name, productType, count, price)
 }

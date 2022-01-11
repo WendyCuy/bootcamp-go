@@ -1,0 +1,1 @@
+{id: 1, nombre: shampoo, precio: $100, cantidad: 10};{id: 2, nombre: cepillo, precio: $50, cantidad: 12};{id: 2, nombre: jabon, precio: $75, cantidad: 21}
