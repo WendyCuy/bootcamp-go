@@ -9,8 +9,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/internal/products"
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/pkg/web"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/internal/products"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/pkg/web"
 	"github.com/gin-gonic/gin"
 )
 

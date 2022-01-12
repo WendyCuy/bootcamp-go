@@ -6,10 +6,10 @@ Importamos las dependencias necesarias. */
 import (
 	"os"
 
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/cmd/server/handler"
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/docs"
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/internal/products"
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/pkg/store"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/cmd/server/handler"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/docs"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/internal/products"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/pkg/store"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	ginSwagger "github.com/swaggo/gin-swagger"
