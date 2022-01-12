@@ -39,7 +39,8 @@ func main() {
 	p := handler.NewProduct(service)
 	r := gin.Default()
 
-	//Documentacion de swagger
+	//Documentacion de swagger.
+	// Al ingresar a http://localhost:8080/docs/index.html se puede visualizar la documentación
 	docs.SwaggerInfo.Host = os.Getenv("HOST")
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -53,3 +54,4 @@ func main() {
 }
 
 //go run cmd/server/main.go
+//
