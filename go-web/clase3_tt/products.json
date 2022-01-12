@@ -26,5 +26,12 @@
     "tipo": "Alimentos",
     "cantidad": 10,
     "precio": 50
+  },
+  {
+    "id": 5,
+    "nombre": "Jabón",
+    "tipo": "Aseo",
+    "cantidad": 10,
+    "precio": 50
   }
 ]
