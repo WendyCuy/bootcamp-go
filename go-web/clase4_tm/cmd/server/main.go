@@ -4,9 +4,9 @@ package main
 Importamos las dependencias necesarias. */
 
 import (
-	"github.com/WendyCuy/bootcamp-go/go-web/clase3_tt/cmd/server/handler"
-	"github.com/WendyCuy/bootcamp-go/go-web/clase3_tt/internal/products"
-	"github.com/WendyCuy/bootcamp-go/go-web/clase3_tt/pkg/store"
+	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tm/cmd/server/handler"
+	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tm/internal/products"
+	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tm/pkg/store"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
