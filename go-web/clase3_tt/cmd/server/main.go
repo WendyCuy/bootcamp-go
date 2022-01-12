@@ -20,7 +20,7 @@ y le pasamos la base de datos al repositorio.*/
 
 func main() {
 	_ = godotenv.Load()
-	db := store.New(store.FileType, "./products.json")
+	db := store.New(store.FileType, "products.json")
 	repo := products.NewRepository(db)
 	service := products.NewService(repo)
 	p := handler.NewProduct(service)

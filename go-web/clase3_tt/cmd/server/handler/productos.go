@@ -30,7 +30,8 @@ type Product struct {
 
 func NewProduct(p products.Service) *Product {
 	return &Product{
-		service: p}
+		service: p,
+	}
 }
 
 /* Método obtener productos. Se encargará de realizar las validaciones
@@ -39,13 +40,19 @@ correspondiente al cliente.*/
 
 func (c *Product) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		//Validar token
-		token := ctx.GetHeader("token")
 
-		if token != os.Getenv("TOKEN") {
-			ctx.JSON(401, gin.H{"error": "token inválido"})
+		token := ctx.Request.Header.Get("token")
+		tokenFromEnv := os.Getenv("TOKEN")
+
+		fmt.Printf("Token desde nuestro env: %s\n", tokenFromEnv)
+
+		if token != tokenFromEnv {
+			ctx.JSON(401, gin.H{
+				"error": "token inválido",
+			})
 			return
 		}
+
 		p, err := c.service.GetAll()
 		if err != nil {
 			ctx.JSON(404, gin.H{

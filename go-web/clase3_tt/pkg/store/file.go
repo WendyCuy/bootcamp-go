@@ -2,6 +2,7 @@ package store
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 )
 
@@ -19,7 +20,7 @@ de store que se utilizará, en este caso solo será por archivo (FileType)*/
 type Type string
 
 const (
-	FileType Type = "file"
+	FileType Type = "filestorage"
 )
 
 /* Método Write . Se utiliza para escribir datos de la estructura en el archivo.
@@ -32,7 +33,15 @@ func (fs *FileStore) Write(data interface{}) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fs.FileName, fileData, 0644)
+	f, err := os.OpenFile(fs.FileName, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	_, err = f.Write(fileData)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 /* Método Read.  Sirve para leer el archvio y guardar su contenido
@@ -41,7 +50,10 @@ empleando la interface que recibirá como parámetro.*/
 func (fs *FileStore) Read(data interface{}) error {
 	file, err := os.ReadFile(fs.FileName)
 	if err != nil {
-		return err
+		if !errors.Is(err, os.ErrNotExist) { // si el error NO fue porque el archivo de storage no existe, retorno el error
+			return err
+		}
+		file = []byte("[]") // inicializo un contenido vacio para realizar el unmarshall
 	}
 	return json.Unmarshal(file, &data)
 }

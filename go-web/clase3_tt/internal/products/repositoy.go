@@ -16,8 +16,6 @@ type Product struct {
 
 var ps []Product
 
-//var lastID int
-
 type Repository interface {
 	GetAll() ([]Product, error)
 	Store(id int, nombre, tipo string, cantidad int, precio float64) (Product, error)
