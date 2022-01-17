@@ -83,6 +83,11 @@ func (r *repository) Store(id int, nombre, tipo string, cantidad int, precio flo
 en caso que coincida con ID enviado, caso contrario retorna un error */
 
 func (r *repository) Update(id int, name, productType string, count int, price float64) (Product, error) {
+	var ps []Product
+	if err := r.db.Read(&ps); err != nil {
+		return Product{}, err
+	}
+	fmt.Printf("%+v", ps)
 	p := Product{Name: name, Type: productType, Count: count, Price: price}
 	updated := false
 	for i := range ps {
@@ -131,7 +136,7 @@ func (r *repository) Delete(id int) error {
 	}
 
 	if !deleted {
-		return fmt.Errorf("Producto %d no encontrado", id)
+		return fmt.Errorf("producto %d no encontrado", id)
 	}
 
 	ps = append(ps[:index], ps[index+1:]...)

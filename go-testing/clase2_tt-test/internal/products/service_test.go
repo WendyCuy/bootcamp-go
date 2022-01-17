@@ -161,24 +161,45 @@ func TestStoreError(t *testing.T) {
 
 func TestServiceUpdate(t *testing.T) {
 	testProduct := Product{
+		ID:    1,
+		Name:  "CellPhone",
+		Type:  "Tech",
+		Count: 3,
+		Price: 250.0,
+	}
+	productoEsperado := Product{
+		ID:    1,
 		Name:  "CellPhone",
 		Type:  "Tech",
 		Count: 4,
 		Price: 100.0,
 	}
-	dbMock := store.Mock{}
+
+	input := []Product{
+		testProduct,
+	}
+	dataJson, _ := json.Marshal(input)
+
+	dbMock := store.Mock{
+		Data: dataJson,
+	}
+
 	storeStub := store.FileStore{
 		FileName: "",
 		Mock:     &dbMock,
 	}
-	myRepo := NewRepository(&updateStub)
+	myRepo := NewRepository(&storeStub)
 	myService := NewService(myRepo)
 
 	// Resultado esperado
-	result, err := myService.Update()
+	result, err := myService.Update(testProduct.ID, testProduct.Name, testProduct.Type, 4, 100.0)
 
 	assert.Nil(t, err, "Error en el update")
-	assert.Equal(t, testProduct, result)
+	assert.Equal(t, productoEsperado, result)
+	// assert.Equal(t, testProduct.Name, result.Name)
+	// assert.Equal(t, testProduct.Type, result.Type)
+	// assert.Equal(t, 100.0, result.Price)
+	// assert.Equal(t, 1, result.ID)
 }
 
 func TestServiceDelete(t *testing.T) {
@@ -205,12 +226,13 @@ func TestServiceDelete(t *testing.T) {
 		FileName: "",
 		Mock:     &dbMock,
 	}
-	myRepo := NewRepository(&deleteStub)
+	myRepo := NewRepository(&storeStub)
 	myService := NewService(myRepo)
 
 	// Resultado esperado
-	result, err := myService.Delete()
+	resultOk := myService.Delete(1)
+	resultNotOk := myService.Delete(3)
 
-	assert.Nil(t, err, "Hubo un error en el delete")
-	assert.Equal(t, input, "No se eliminó el producto")
+	assert.Nil(t, resultOk, "Hubo un error en el delete")
+	assert.NotNil(t, resultNotOk, "Hubo un error en el delete")
 }

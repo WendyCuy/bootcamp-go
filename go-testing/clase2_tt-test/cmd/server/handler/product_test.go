@@ -1,4 +1,4 @@
-package test
+package handler
 
 import (
 	"bytes"
@@ -8,7 +8,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/cmd/server/handler"
 	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/internal/products"
 	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/pkg/store"
 	"github.com/gin-gonic/gin"
@@ -20,14 +19,15 @@ func createServer() *gin.Engine {
 	db := store.New(store.FileType, "../products.json")
 	repo := products.NewRepository(db)
 	service := products.NewService(repo)
-	p := handler.NewProduct(service)
+	p := NewProduct(service)
 
 	r := gin.Default()
 
 	pr := r.Group("/products")
 	pr.POST("/", p.Store())
 	pr.GET("/", p.GetAll())
-	pr.PATCH("/:id", p.Update())
+	pr.PUT("/:id", p.Update())
+	pr.PATCH("/:id", p.UpdateName())
 	pr.DELETE("/:id", p.Delete())
 	return r
 }
@@ -48,7 +48,7 @@ func Test_SaveProduct_OK(t *testing.T) {
 	// crear el Server y definir las rutas
 	r := createServer()
 	// crear request de tipo post y response para obtener el resultado
-	req, rr := createRequestTest(http.MethodPost, "/products/", `{
+	req, rr := createRequestTest(http.MethodPost, "http://localhost:8080/products/", `{
         "nombre": "Tester","tipo": "Funcional","cantidad": 10,"precio": 99.99
     }`)
 	// indicar al servidor que pueda atender la solicitud
