@@ -1,4 +1,4 @@
-package handler_test
+package test
 
 import (
 	"bytes"
@@ -85,9 +85,9 @@ func Test_GetProduct_OK(t *testing.T) {
 }
 
 func Test_UpdateProduct_OK(t *testing.T) {
-	// crear el Server y definir las Rutas
+	// crear el Server y definir las rutas
 	r := createServer()
-	// crear Request del tipo PUT y Response para obtener el resultado
+	// crear Request del tipo PATCH y Response para obtener el resultado
 	req, rr := createRequestTest(http.MethodPatch, "/products/1", `{
         "nombre": "Tester","precio": 99.99
     }`)
@@ -99,9 +99,9 @@ func Test_UpdateProduct_OK(t *testing.T) {
 }
 
 func Test_DeleteProduct_OK(t *testing.T) {
-	// crear el Server y definir las Rutas
+	// crear el Server y definir las rutas
 	r := createServer()
-	// crear Request del tipo PUT y Response para obtener el resultado
+	// crear Request del tipo DELETE y Response para obtener el resultado
 	req, rr := createRequestTest(http.MethodDelete, "/products/1", "")
 
 	// indicar al servidor que pueda atender la solicitud
