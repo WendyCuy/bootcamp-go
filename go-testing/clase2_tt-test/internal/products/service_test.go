@@ -39,6 +39,23 @@ func (dr *DummyRepo) Delete(id int) error {
 	return nil
 }
 
+type mockStore struct {
+	Data          []Product
+	ReadWasCalled bool
+}
+
+func (s *mockStore) Read(data interface{}) error {
+	s.ReadWasCalled = true
+
+	fileData, _ := json.Marshal(s.Data)
+
+	return json.Unmarshal(fileData, &data)
+}
+
+func (s *mockStore) Write(data interface{}) error {
+	return nil
+}
+
 /*De forma análoga al stub q se diseño para el test unitario, se hace
 lo mismo para el test de integración entre repo y el service*/
 func TestServiceGetAll(t *testing.T) {
@@ -110,26 +127,21 @@ inicial vacío y se ejecuta el método Store. La respuesta debe retornar un
 producto con las mismas características y con ID=1.*/
 func TestStore(t *testing.T) {
 	testProduct := Product{
+		ID:    20,
 		Name:  "CellPhone",
 		Type:  "Tech",
 		Count: 3,
 		Price: 52.0,
 	}
-	dbMock := store.Mock{}
+	db := mockStore{[]Product{testProduct}, false}
+	repo := NewRepository(&db)
 
-	storeStub := store.FileStore{
-		FileName: "",
-		Mock:     &dbMock,
-	}
-	myRepo := NewRepository(&storeStub)
-	myService := NewService(myRepo)
-
-	result, _ := myService.Store(testProduct.Name, testProduct.Type, testProduct.Count, testProduct.Price)
+	result, _ := repo.Store(testProduct.ID, testProduct.Name, testProduct.Type, testProduct.Count, testProduct.Price)
 
 	assert.Equal(t, testProduct.Name, result.Name)
 	assert.Equal(t, testProduct.Type, result.Type)
 	assert.Equal(t, testProduct.Price, result.Price)
-	assert.Equal(t, 1, result.ID)
+
 }
 
 /* Con esta integración se comprueba que si ocurre un error durante la

@@ -12,12 +12,5 @@
   "tipo": "Funcional",
   "cantidad": 10,
   "precio": 99.99
- },
- {
-  "id": 6,
-  "nombre": "Tester",
-  "tipo": "Funcional",
-  "cantidad": 10,
-  "precio": 99.99
  }
 ]

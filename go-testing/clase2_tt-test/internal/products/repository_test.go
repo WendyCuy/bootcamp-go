@@ -27,9 +27,10 @@ func TestGetAllError(t *testing.T) {
 	}
 	myRepo := NewRepository(&storeMocked)
 
-	_, err := myRepo.GetAll() // Se llamó al GetAll del repositorio
+	result, err := myRepo.GetAll()
 
 	assert.Equal(t, err, expectedError)
+	assert.Nil(t, result)
 }
 
 /* En este caso se crea la función "TestGetAll.

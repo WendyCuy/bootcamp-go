@@ -13,8 +13,8 @@ Se agrega Mock para realizar test*/
 type Store interface {
 	Read(data interface{}) error
 	Write(data interface{}) error
-	AddMock(mock *Mock)
-	ClearMock()
+	//AddMock(mock *Mock)
+	//ClearMock()
 }
 
 /* Se debe implementar una constante de tipo Type para definir el tipo
