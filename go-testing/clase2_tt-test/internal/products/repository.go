@@ -3,7 +3,7 @@ package products
 import (
 	"fmt"
 
-	"github.com/WendyCuy/bootcamp-go/go-web/clase4_tt/pkg/store"
+	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/pkg/store"
 )
 
 type Product struct {
@@ -115,17 +115,29 @@ func (r *repository) UpdateName(id int, name string) (Product, error) {
 }
 
 func (r *repository) Delete(id int) error {
+	var ps []Product
+	if err := r.db.Read(&ps); err != nil {
+		return err
+	}
+
 	deleted := false
 	var index int
+
 	for i := range ps {
 		if ps[i].ID == id {
 			index = i
 			deleted = true
 		}
 	}
+
 	if !deleted {
-		return fmt.Errorf("producto %d no encontrado", id)
+		return fmt.Errorf("Producto %d no encontrado", id)
 	}
+
 	ps = append(ps[:index], ps[index+1:]...)
+
+	if err := r.db.Write(ps); err != nil {
+		return err
+	}
 	return nil
 }
