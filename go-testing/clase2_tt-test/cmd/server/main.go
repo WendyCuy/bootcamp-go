@@ -4,6 +4,7 @@ package main
 Importamos las dependencias necesarias. */
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/WendyCuy/bootcamp-go/go-testing/clase2_tt-test/cmd/server/handler"
@@ -50,7 +51,13 @@ func main() {
 	pr.PUT("/:id", p.Update())
 	pr.PATCH("/:id", p.UpdateName())
 	pr.DELETE("/:id", p.Delete())
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
+	// Se realiza ajuste con validador de golangci-lint
+	err := r.Run()
+	if err != nil {
+		fmt.Println("No se pudo iniciar el programa")
+	}
+
 }
 
 //go run cmd/server/main.go

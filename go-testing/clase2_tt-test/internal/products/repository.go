@@ -45,7 +45,10 @@ método */
 
 func (r *repository) GetAll() ([]Product, error) {
 	var ps []Product
-	r.db.Read(&ps)
+	err := r.db.Read(&ps)
+	if err != nil {
+		fmt.Println("No se pudo leer data")
+	}
 	return ps, nil
 }
 
@@ -70,7 +73,10 @@ func (r *repository) LastID() (int, error) {
 func (r *repository) Store(id int, nombre, tipo string, cantidad int, precio float64) (Product, error) {
 
 	var ps []Product
-	r.db.Read(&ps)
+	err := r.db.Read(&ps)
+	if err != nil {
+		fmt.Println("No se pudo leer data")
+	}
 	p := Product{id, nombre, tipo, cantidad, precio}
 	ps = append(ps, p)
 	if err := r.db.Write(ps); err != nil {
