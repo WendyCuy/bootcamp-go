@@ -89,7 +89,7 @@ func Test_UpdateProduct_OK(t *testing.T) {
 	r := createServer()
 	// crear Request del tipo Put y Response para obtener el resultado
 	req, rr := createRequestTest(http.MethodPut, "/products/4", `{
-        "nombre": "Telefono","tipo": "Funcional","cantidad": 10,"precio": 10.99
+        "nombre": "Telefono","tipo": "Tecnologia","cantidad": 11,"precio": 25.80
     }`)
 
 	// indicar al servidor que pueda atender la solicitud
@@ -102,7 +102,7 @@ func Test_DeleteProduct_OK(t *testing.T) {
 	// crear el Server y definir las rutas
 	r := createServer()
 	// crear Request del tipo DELETE y Response para obtener el resultado
-	req, rr := createRequestTest(http.MethodDelete, "/products/3", "")
+	req, rr := createRequestTest(http.MethodDelete, "/products/6", "")
 
 	// indicar al servidor que pueda atender la solicitud
 	r.ServeHTTP(rr, req)
