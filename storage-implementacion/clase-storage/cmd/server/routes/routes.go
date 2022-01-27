@@ -38,6 +38,7 @@ func (r *router) buildProductRoutes() {
 	routes := r.rg
 	{
 		routes.GET("/products/name", handler.GetByName())
+		routes.POST("/products/", handler.Store())
 	}
 
 }
