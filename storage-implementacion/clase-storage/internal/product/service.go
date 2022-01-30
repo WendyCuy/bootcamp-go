@@ -2,6 +2,7 @@ package product
 
 import (
 	"github.com/WendyCuy/bootcamp-go/storage-implementacion/clase-storage/internal/models"
+	"github.com/gin-gonic/gin"
 )
 
 // Se implementa la interface Servicio con sus métodos
@@ -12,6 +13,8 @@ type Service interface {
 	Update(id int, name string, typeProduct string, count int, price float64) (models.Product, error)
 	GetAll() ([]models.Product, error)
 	Delete(id int) error
+	UpdateWithContext(ctx *gin.Context, id int, name string, typeProduct string,
+		count int, price float64) (models.Product, error)
 }
 type service struct {
 	repository Repository
@@ -99,4 +102,27 @@ func (s *service) Delete(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (s *service) UpdateWithContext(ctx *gin.Context, id int, name string, typeProduct string,
+	count int, price float64) (models.Product, error) {
+
+	product, err := s.repository.GetOne(int(id))
+
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	productToUp := models.Product{Name: name, Type: typeProduct,
+		Count: count, Price: price, ID: id}
+
+	err = s.repository.UpdateWithContext(ctx, productToUp)
+
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	product.ID = id
+
+	return product, nil
 }

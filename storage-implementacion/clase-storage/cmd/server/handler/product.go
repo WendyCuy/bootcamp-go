@@ -143,3 +143,32 @@ func (s *Product) Delete() gin.HandlerFunc {
 		web.Success(c, 204, "Producto eliminado")
 	}
 }
+
+func (s *Product) UpdateWithContext() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+		if err != nil {
+
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		var req request
+
+		if err := ctx.Bind(&req); err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+		s, err := s.productService.UpdateWithContext(ctx, int(id), req.Name, req.Type, req.Count, req.Price)
+
+		if err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		web.Success(ctx, 200, s)
+
+	}
+}

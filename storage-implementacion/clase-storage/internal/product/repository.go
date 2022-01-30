@@ -1,6 +1,7 @@
 package product
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -12,11 +13,11 @@ import (
 usadas en constantes fuera del código */
 
 const (
-	queryByname = "SELECT * FROM products WHERE name = ?;"
+	queryByname = "SELECT id, name, category, count, price FROM products WHERE name = ?"
 	queryStore  = "INSERT INTO products(name, type, count, price) VALUES( ?, ?, ?, ? )"
-	queryGetOne = "select * from products where id = ?"
+	queryGetOne = "SELECT p.id, p.name, p.category, p.count, p.price FROM products p WHERE p.id = ?"
 	queryUpdate = "UPDATE products SET name=?, type=?, count=?, price=? WHERE id=?"
-	queryGetAll = "select id, name, type, count, price from products"
+	queryGetAll = "SELECT id, name, category, count, price FROM products"
 	queryDelete = "DELETE FROM products WHERE id = ?"
 )
 
@@ -28,6 +29,7 @@ type Repository interface {
 	Update(product models.Product) error
 	GetAll() ([]models.Product, error)
 	Delete(id int) error
+	UpdateWithContext(ctx context.Context, product models.Product) error
 }
 
 type repository struct {
@@ -54,7 +56,7 @@ func (r *repository) GetByName(name string) (models.Product, error) {
 func (r *repository) Store(product models.Product) (models.Product, error) { // se inicializa la base
 	stmt, err := r.db.Prepare(queryStore) // se prepara el SQL
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer stmt.Close() // se cierra la sentencia al terminar. Si quedan abiertas se genera consumos de memoria
 	var result sql.Result
@@ -117,7 +119,7 @@ func (r *repository) GetAll() ([]models.Product, error) {
 		// por cada fila se obtiene un objeto del tipo Product
 		var product models.Product
 		if err := rows.Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price); err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return nil, err
 		}
 		//se añade el objeto obtenido al slide products
@@ -130,12 +132,33 @@ func (r *repository) GetAll() ([]models.Product, error) {
 func (r *repository) Delete(id int) error {
 	stmt, err := r.db.Prepare(queryDelete) // se prepara la sentencia SQL a ejecutar
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil
 	}
 	defer stmt.Close()     // se cierra la sentencia al terminar. Si quedan abiertas se genera consumos de memoria
 	_, err = stmt.Exec(id) // retorna un sql.Result y un error
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *repository) UpdateWithContext(ctx context.Context, product models.Product) error {
+
+	stmt, err := r.db.Prepare(queryUpdate)
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.ExecContext(ctx, product.Name, product.Type, product.Count, product.Price, product.ID)
+	if err != nil {
+		return err
+	}
+
+	_, err = res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
