@@ -1,12 +1,19 @@
 package handler
 
 import (
-	"fmt"
+	"strconv"
 
 	"github.com/WendyCuy/bootcamp-go/storage-implementacion/clase-storage/internal/product"
 	"github.com/WendyCuy/bootcamp-go/storage-implementacion/clase-storage/pkg/web"
 	"github.com/gin-gonic/gin"
 )
+
+type request struct {
+	Name  string  `json:"name"`
+	Type  string  `json:"tipo"`
+	Count int     `json:"cantidad"`
+	Price float64 `json:"precio"`
+}
 
 type Product struct {
 	productService product.Service
@@ -18,14 +25,14 @@ func NewProduct(p product.Service) *Product {
 	}
 }
 
-func (p *Product) GetByName() gin.HandlerFunc {
+func (s *Product) GetByName() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		name := c.Param("name")
 		if name == "" {
 			web.Error(c, 400, "Error")
 			return
 		}
-		pr, err := p.productService.GetByName(name)
+		pr, err := s.productService.GetByName(name)
 		if err != nil {
 			web.Error(c, 404, err.Error())
 			return
@@ -33,46 +40,74 @@ func (p *Product) GetByName() gin.HandlerFunc {
 		web.Success(c, 200, pr)
 	}
 }
-func (p *Product) Store() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		type ProductCreate struct {
-			ID    *int     `json:"id"`
-			Name  *string  `json:"name"`
-			Type  *string  `json:"type"`
-			Count *int     `json:"count"`
-			Price *float64 `json:"price"`
-		}
 
-		var req ProductCreate
+func (s *Product) Store() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
 
-		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, 422, "%s", err.Error())
+		var req request
+
+		if err := ctx.Bind(&req); err != nil {
+			web.Error(ctx, 400, err.Error())
 			return
 		}
 
-		if req.Name == nil {
-			web.Error(c, 422, "%s", fmt.Errorf("Error: el campo Name es obligatorio"))
-			return
-		}
-		if req.Type == nil {
-			web.Error(c, 422, "%s", fmt.Errorf("Error: el campo Type es obligatorio"))
-			return
-		}
-		if req.Count == nil {
-			web.Error(c, 422, "%s", fmt.Errorf("Error: el campo Count es obligatorio"))
-			return
-		}
-		if req.Price == nil {
-			web.Error(c, 422, "%s", fmt.Errorf("Error: el campo Price es obligatorio"))
-			return
-		}
+		product, err := s.productService.Store(req.Name, req.Type, req.Count, req.Price)
 
-		prod, err := p.productService.Store(c, *req.Name, *req.Type, *req.Count, *req.Price)
 		if err != nil {
-			web.Error(c, 422, "%s", fmt.Errorf("Error: no se pudo hacer el insert"))
+			web.Error(ctx, 400, err.Error())
 			return
 		}
 
-		web.Success(c, 200, prod)
+		web.Success(ctx, 201, product)
+
+	}
+}
+
+func (s *Product) GetOne() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		id, err := strconv.Atoi(ctx.Param("id"))
+
+		if err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		product, err := s.productService.GetOne(id)
+
+		if err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		web.Success(ctx, 200, product)
+	}
+}
+
+func (s *Product) Update() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+		if err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		var req request
+
+		if err := ctx.Bind(&req); err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+		s, err := s.productService.Update(int(id), req.Name, req.Type, req.Count, req.Price)
+
+		if err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		web.Success(ctx, 200, s)
+
 	}
 }

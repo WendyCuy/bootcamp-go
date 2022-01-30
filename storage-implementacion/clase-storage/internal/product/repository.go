@@ -2,15 +2,28 @@ package product
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/WendyCuy/bootcamp-go/storage-implementacion/clase-storage/internal/models"
 )
 
+/* Optimización. Una buena práctica en la implementación de repositorios, es abstraer todas las queries
+usadas en constantes fuera del código */
+
+const (
+	queryByname = "SELECT * FROM products WHERE name = ?;"
+	queryStore  = "INSERT INTO products(name, type, count, price) VALUES( ?, ?, ?, ? )"
+	queryGetOne = "select * from products where id = ?"
+	queryUpdate = "UPDATE products SET name=?, type=?, count=?, price=? WHERE id=?"
+)
+
 // Repository encapsulates the storage of a product.
 type Repository interface {
 	GetByName(name string) (models.Product, error)
-	Store(name, productType string, count int, price float64) (models.Product, error)
+	Store(product models.Product) (models.Product, error)
+	GetOne(id int) (models.Product, error)
+	Update(product models.Product) error
 }
 
 type repository struct {
@@ -24,8 +37,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetByName(name string) (models.Product, error) {
-	query := "SELECT * FROM products WHERE name = ?;"
-	row := r.db.QueryRow(query, name)
+	row := r.db.QueryRow(queryByname, name)
 	p := models.Product{}
 	err := row.Scan(&p.ID, &p.Name, &p.Type, &p.Count, &p.Price)
 	if err != nil {
@@ -36,7 +48,7 @@ func (r *repository) GetByName(name string) (models.Product, error) {
 }
 
 func (r *repository) Store(product models.Product) (models.Product, error) { // se inicializa la base
-	stmt, err := r.db.Prepare("INSERT INTO products(name, type, count, price) VALUES( ?, ?, ?, ? )") // se prepara el SQL
+	stmt, err := r.db.Prepare(queryStore) // se prepara el SQL
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,4 +61,40 @@ func (r *repository) Store(product models.Product) (models.Product, error) { // 
 	insertedId, _ := result.LastInsertId() // del sql.Resul devuelto en la ejecución obtenemos el Id insertado
 	product.ID = int(insertedId)
 	return product, nil
+}
+
+func (r *repository) GetOne(id int) (models.Product, error) {
+	row := r.db.QueryRow(queryGetOne, id)
+	p := models.Product{}
+	err := row.Scan(&p.ID, &p.Name, &p.Type, &p.Count, &p.Price) // rows.Scan: lee los campos de la fila obtenida, y los almacena en las posiciones de memoria de las variables que se indican por parámetros.
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	return p, nil
+}
+
+func (r *repository) Update(product models.Product) error {
+
+	stmt, err := r.db.Prepare(queryUpdate)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%+v\n", product)
+
+	res, err := stmt.Exec(product.Name, product.Type, product.Count,
+		product.Price, product.ID)
+	if err != nil {
+		return err
+	}
+
+	ra, err := res.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Print(ra)
+
+	return nil
 }

@@ -38,7 +38,10 @@ func (r *router) buildProductRoutes() {
 	routes := r.rg
 	{
 		routes.GET("/products/name", handler.GetByName())
-		routes.POST("/products/", handler.Store())
+		routes.POST("/", handler.Store())
+		routes.GET("/products/id", handler.GetOne())
+		routes.PUT("/products/id", handler.Update())
+
 	}
 
 }
