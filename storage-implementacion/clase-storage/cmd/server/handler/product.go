@@ -111,3 +111,17 @@ func (s *Product) Update() gin.HandlerFunc {
 
 	}
 }
+
+func (s *Product) GetAll() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		sellers, err := s.productService.GetAll()
+
+		if err != nil {
+			web.Error(ctx, 400, err.Error())
+			return
+		}
+
+		web.Success(ctx, 200, sellers)
+	}
+}

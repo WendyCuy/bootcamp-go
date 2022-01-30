@@ -10,6 +10,7 @@ type Service interface {
 	Store(name string, typeProduct string, count int, price float64) (models.Product, error)
 	GetOne(id int) (models.Product, error)
 	Update(id int, name string, typeProduct string, count int, price float64) (models.Product, error)
+	GetAll() ([]models.Product, error)
 }
 type service struct {
 	repository Repository
@@ -77,4 +78,15 @@ func (s *service) Update(id int, name string, typeProduct string, count int, pri
 	}
 
 	return product, nil
+}
+
+func (s *service) GetAll() ([]models.Product, error) {
+
+	products, err := s.repository.GetAll()
+
+	if err != nil {
+		return []models.Product{}, err
+	}
+
+	return products, nil
 }

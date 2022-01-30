@@ -16,6 +16,7 @@ const (
 	queryStore  = "INSERT INTO products(name, type, count, price) VALUES( ?, ?, ?, ? )"
 	queryGetOne = "select * from products where id = ?"
 	queryUpdate = "UPDATE products SET name=?, type=?, count=?, price=? WHERE id=?"
+	queryGetAll = "select id, name, type, count, price from products"
 )
 
 // Repository encapsulates the storage of a product.
@@ -24,6 +25,7 @@ type Repository interface {
 	Store(product models.Product) (models.Product, error)
 	GetOne(id int) (models.Product, error)
 	Update(product models.Product) error
+	GetAll() ([]models.Product, error)
 }
 
 type repository struct {
@@ -97,4 +99,28 @@ func (r *repository) Update(product models.Product) error {
 	fmt.Print(ra)
 
 	return nil
+}
+
+func (r *repository) GetAll() ([]models.Product, error) {
+	var products []models.Product
+	db := r.db
+	rows, err := db.Query(queryGetAll)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	// se recorren todas las filas
+	for rows.Next() {
+		// por cada fila se obtiene un objeto del tipo Product
+		var product models.Product
+		if err := rows.Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price); err != nil {
+			log.Fatal(err)
+			return nil, err
+		}
+		//se añade el objeto obtenido al slide products
+		products = append(products, product)
+	}
+
+	return products, nil
 }

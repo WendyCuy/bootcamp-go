@@ -41,6 +41,7 @@ func (r *router) buildProductRoutes() {
 		routes.POST("/", handler.Store())
 		routes.GET("/products/id", handler.GetOne())
 		routes.PUT("/products/id", handler.Update())
+		routes.GET("/products", handler.GetAll())
 
 	}
 
