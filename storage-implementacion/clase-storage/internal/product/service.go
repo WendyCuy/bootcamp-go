@@ -11,6 +11,7 @@ type Service interface {
 	GetOne(id int) (models.Product, error)
 	Update(id int, name string, typeProduct string, count int, price float64) (models.Product, error)
 	GetAll() ([]models.Product, error)
+	Delete(id int) error
 }
 type service struct {
 	repository Repository
@@ -89,4 +90,13 @@ func (s *service) GetAll() ([]models.Product, error) {
 	}
 
 	return products, nil
+}
+
+func (s *service) Delete(id int) error {
+
+	err := s.repository.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

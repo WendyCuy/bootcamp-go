@@ -17,6 +17,7 @@ const (
 	queryGetOne = "select * from products where id = ?"
 	queryUpdate = "UPDATE products SET name=?, type=?, count=?, price=? WHERE id=?"
 	queryGetAll = "select id, name, type, count, price from products"
+	queryDelete = "DELETE FROM products WHERE id = ?"
 )
 
 // Repository encapsulates the storage of a product.
@@ -26,6 +27,7 @@ type Repository interface {
 	GetOne(id int) (models.Product, error)
 	Update(product models.Product) error
 	GetAll() ([]models.Product, error)
+	Delete(id int) error
 }
 
 type repository struct {
@@ -123,4 +125,17 @@ func (r *repository) GetAll() ([]models.Product, error) {
 	}
 
 	return products, nil
+}
+
+func (r *repository) Delete(id int) error {
+	stmt, err := r.db.Prepare(queryDelete) // se prepara la sentencia SQL a ejecutar
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()     // se cierra la sentencia al terminar. Si quedan abiertas se genera consumos de memoria
+	_, err = stmt.Exec(id) // retorna un sql.Result y un error
+	if err != nil {
+		return err
+	}
+	return nil
 }

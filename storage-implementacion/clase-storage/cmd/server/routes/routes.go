@@ -42,7 +42,7 @@ func (r *router) buildProductRoutes() {
 		routes.GET("/products/id", handler.GetOne())
 		routes.PUT("/products/id", handler.Update())
 		routes.GET("/products", handler.GetAll())
-
+		routes.DELETE("/products/id", handler.Delete())
 	}
 
 }

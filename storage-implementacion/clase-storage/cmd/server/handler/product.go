@@ -115,13 +115,31 @@ func (s *Product) Update() gin.HandlerFunc {
 func (s *Product) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		sellers, err := s.productService.GetAll()
+		products, err := s.productService.GetAll()
 
 		if err != nil {
 			web.Error(ctx, 400, err.Error())
 			return
 		}
 
-		web.Success(ctx, 200, sellers)
+		web.Success(ctx, 200, products)
+	}
+}
+
+func (s *Product) Delete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil {
+			web.Error(c, 400, "invalid ID")
+			return
+		}
+
+		err = s.productService.Delete(int(id))
+		if err != nil {
+			web.Error(c, 404, err.Error())
+			return
+		}
+
+		web.Success(c, 204, "Producto eliminado")
 	}
 }
